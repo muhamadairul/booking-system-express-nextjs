@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  L
+  P
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+
+  users     User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  password       String
+  username       String
+  status         UserStatus @default(ACTIVE)
+  image          String?
+  rememberToken  String?
+
+  roleId         Int
+  role           Role      @relation(fields: [roleId], references: [id])
+
+  customer       Customer?
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+}
+
+model Customer {
+  id        Int     @id @default(autoincrement())
+  userId    Int     @unique
+  name      String
+  phone     String
+  address   String?
+  gender    Gender?
+
+  user      User    @relation(fields: [userId], references: [id])
+  bookings  Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+model Resource {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  capacity    Int?
+  description String?
+
+  schedules   Schedule[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+}
+
+model Schedule {
+  id          Int      @id @default(autoincrement())
+  resourceId  Int
+  startTime   DateTime
+  endTime     DateTime
+  price       BigInt?
+
+  resource    Resource @relation(fields: [resourceId], references: [id])
+  bookings    Booking[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+}
+
+model Booking {
+  id          Int           @id @default(autoincrement())
+  customerId  Int
+  scheduleId  Int
+  quantity    Int           @default(1)
+  status      BookingStatus @default(PENDING)
+
+  customer    Customer @relation(fields: [customerId], references: [id])
+  schedule    Schedule @relation(fields: [scheduleId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+}
+
