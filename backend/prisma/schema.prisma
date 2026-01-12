@@ -31,93 +31,106 @@ enum UserStatus {
 }
 
 model Role {
-  id        Int      @id @default(autoincrement())
-  name      String
-  slug      String   @unique
+  id   Int    @id @default(autoincrement())
+  name String
+  slug String @unique
 
-  users     User[]
+  users User[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  email          String    @unique
-  password       String
-  username       String
-  status         UserStatus @default(ACTIVE)
-  image          String?
-  rememberToken  String?
+  id            Int        @id @default(autoincrement())
+  email         String     @unique
+  password      String
+  username      String
+  status        UserStatus @default(ACTIVE)
+  image         String?
+  rememberToken String?
 
-  roleId         Int
-  role           Role      @relation(fields: [roleId], references: [id])
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id])
 
-  customer       Customer?
+  customer     Customer?
+  accessTokens UserAccessToken[]
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Customer {
-  id        Int     @id @default(autoincrement())
-  userId    Int     @unique
-  name      String
-  phone     String
-  address   String?
-  gender    Gender?
+  id      Int     @id @default(autoincrement())
+  userId  Int     @unique
+  name    String
+  phone   String
+  address String?
+  gender  Gender?
 
-  user      User    @relation(fields: [userId], references: [id])
-  bookings  Booking[]
+  user     User      @relation(fields: [userId], references: [id])
+  bookings Booking[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
 model Resource {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
   type        String
   capacity    Int?
   description String?
 
-  schedules   Schedule[]
+  schedules Schedule[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Schedule {
-  id          Int      @id @default(autoincrement())
-  resourceId  Int
-  startTime   DateTime
-  endTime     DateTime
-  price       BigInt?
+  id         Int      @id @default(autoincrement())
+  resourceId Int
+  startTime  DateTime
+  endTime    DateTime
+  price      BigInt?
 
-  resource    Resource @relation(fields: [resourceId], references: [id])
-  bookings    Booking[]
+  resource Resource  @relation(fields: [resourceId], references: [id])
+  bookings Booking[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Booking {
-  id          Int           @id @default(autoincrement())
-  customerId  Int
-  scheduleId  Int
-  quantity    Int           @default(1)
-  status      BookingStatus @default(PENDING)
+  id         Int           @id @default(autoincrement())
+  customerId Int
+  scheduleId Int
+  quantity   Int           @default(1)
+  status     BookingStatus @default(PENDING)
 
-  customer    Customer @relation(fields: [customerId], references: [id])
-  schedule    Schedule @relation(fields: [scheduleId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+  schedule Schedule @relation(fields: [scheduleId], references: [id])
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
+model UserAccessToken {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  token      String    @unique
+  expiredAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
