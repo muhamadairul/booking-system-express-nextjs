@@ -20,15 +20,29 @@ export async function createResource(data: CreateResourceDTO) {
   });
 }
 
-export async function getResources() {
-  return prisma.resource.findMany({
-    where: {
-      deletedAt: null,
+export async function getResources(page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+
+  const [items, total] = await prisma.$transaction([
+    prisma.resource.findMany({
+      where: { deletedAt: null },
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.resource.count({
+      where: { deletedAt: null },
+    }),
+  ]);
+
+  return {
+    items,
+    meta: {
+      page,
+      limit,
+      totalItems: total,
     },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  };
 }
 
 export async function getResourceById(id: number) {

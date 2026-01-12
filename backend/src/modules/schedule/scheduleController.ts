@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import * as ScheduleService from "./scheduleService";
+import { serializeBigInt } from "../../utils/serialize";
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
     const schedule = await ScheduleService.createSchedule(req.body);
-    res.status(201).json(schedule);
+    res.status(201).json(serializeBigInt(schedule));
   } catch (err) {
     next(err);
   }
@@ -49,7 +50,7 @@ export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number(req.params.id);
     await ScheduleService.softDeleteSchedule(id);
-    res.status(204).send();
+    res.json({ message: "Schedule deleted" }).status(200).send();
   } catch (err) {
     next(err);
   }

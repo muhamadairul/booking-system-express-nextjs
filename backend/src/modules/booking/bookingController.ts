@@ -1,5 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import * as BookingService from "./bookingService";
+import { paginatedResponse } from "../../utils/response";
+
+export async function index(req: Request, res: Response, next: NextFunction) {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const result = await BookingService.getBookings(page, limit);
+
+    res.json(paginatedResponse("Berhasil mendapatkan data!", result.items, result.meta));
+  } catch (err) {
+    next(err);
+  }
+}
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
@@ -29,4 +43,3 @@ export async function cancel(req: Request, res: Response, next: NextFunction) {
     next(e);
   }
 }
-

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as ResourceService from "./resourceService";
+import { paginatedResponse } from "../../utils/response";
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
@@ -10,10 +11,16 @@ export async function create(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function findAll(req: Request, res: Response, next: NextFunction) {
+export async function index(req: Request, res: Response, next: NextFunction) {
   try {
-    const resources = await ResourceService.getResources();
-    res.json(resources);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const result = await ResourceService.getResources(page, limit);
+
+    res.json(
+      paginatedResponse("Berhasil mendapatkan data!", result.items, result.meta)
+    );
   } catch (err) {
     next(err);
   }

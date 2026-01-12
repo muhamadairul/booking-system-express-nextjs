@@ -6,6 +6,31 @@ interface CreateBookingDTO {
   quantity?: number;
 }
 
+export async function getBookings(page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+
+  const [items, total] = await prisma.$transaction([
+    prisma.booking.findMany({
+      where: { deletedAt: null },
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.booking.count({
+      where: { deletedAt: null },
+    }),
+  ]);
+
+  return {
+    items,
+    meta: {
+      page,
+      limit,
+      totalItems: total,
+    },
+  };
+}
+
 export async function createBooking(data: CreateBookingDTO) {
   const quantity = data.quantity ?? 1;
 
