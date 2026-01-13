@@ -34,3 +34,11 @@ export async function authLogout(req: any, res: any, next: any) {
     next(e);
   }
 }
+
+export function me(req: any, res: any) {
+  res.json(
+    successResponse("Berhasil mendapatkan data", {
+      user: req.user,
+    })
+  );
+}

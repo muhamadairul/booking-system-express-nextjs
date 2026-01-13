@@ -107,5 +107,3 @@ export async function restoreUser(id: number) {
     },
   });
 }
-
-// export async function me(req: any) 
