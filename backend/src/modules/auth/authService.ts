@@ -3,18 +3,22 @@ import crypto from "crypto";
 import { prisma } from "../../config/prisma";
 import { generateToken } from "../../utils/token";
 
-export async function login(email: string, password: string, agent?: string) {
-  const user = await prisma.user.findUnique({
-    where: { email },
+export async function login(identifier: string, password: string, agent?: string) {
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: identifier }, { username: identifier }],
+      deletedAt: null,
+      status: "ACTIVE",
+    },
   });
 
   if (!user) {
-    throw new Error("Email atau password salah");
+    throw new Error("Email/Username atau password salah");
   }
 
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
-    throw new Error("Email atau password salah");
+    throw new Error("Email/Username atau password salah");
   }
 
   const token = generateToken();
@@ -31,10 +35,9 @@ export async function login(email: string, password: string, agent?: string) {
   return {
     message: "Login berhasil",
     data: {
-      user,
       token,
       tokenType: "Bearer",
-      includes: { user: true },
+      user,
     },
   };
 }

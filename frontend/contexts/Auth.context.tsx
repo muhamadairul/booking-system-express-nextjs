@@ -31,8 +31,7 @@ export const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
   const fetchUser = async () => {
     const fetch = await api({path: "me"});
-    
-    setUser(fetch?.data?.data)
+    setUser(fetch?.data?.data?.user || null);
   }
 
   useEffect(() => {

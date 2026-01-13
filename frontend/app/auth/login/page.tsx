@@ -20,10 +20,10 @@ export default function Login() {
             fields={[
               {
                 construction: {
-                  name: "email",
-                  label: "E-mail",
-                  placeholder: "Ex: example@mail.com",
-                  validations: "required|min:10|max:50|email"
+                  name: "identifier",
+                  label: "Email or Username",
+                  placeholder: "Ex: example@mail.com or username",
+                  validations: "required|min:3|max:50"
                 }
               },
               {
@@ -36,10 +36,12 @@ export default function Login() {
               }
             ]}
             submitControl={{
+              headers: {"Content-Type": "application/json"},
+              method: "POST",
               path: "login"
             }}
             onSuccess={(res) => {
-              setAccessToken(res?.data?.token)
+              setAccessToken(res?.data?.accessToken)
               setUser(res?.data?.user)
               router.push("/auth/me")
             }}
