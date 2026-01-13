@@ -55,7 +55,7 @@ export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number(req.params.id);
     await roleService.softDeleteRole(id);
-    res.status(204).send();
+    res.status(200).send();
   } catch (err) {
     next(err);
   }

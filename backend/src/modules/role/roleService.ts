@@ -1,18 +1,23 @@
 import { UserStatus } from "@prisma/client";
 import { createHash } from "crypto";
 import { prisma } from "../../config/prisma";
+import { slugify } from "../../utils/slugfy";
 
 export interface CreateRoleDTO {
   name: string;
 }
 
 export interface UpdateRoleDTO {
-  name: string;
+  name?: string;
 }
 
 export async function createRole(data: CreateRoleDTO) {
-  const slug = data.name.toLowerCase().replace(/\s+/g, "-");
-  const role = await prisma.role.findUnique({ where: { slug } });
+  const slug = slugify(data.name);
+  const role = await prisma.role.findFirst({
+    where: {
+      AND: [{ slug }, { deletedAt: null }],
+    },
+  });
   if (role) {
     throw new Error("Role already exists");
   }
@@ -35,7 +40,7 @@ export async function getRoles(page = 1, limit = 10) {
       take: limit,
       orderBy: { createdAt: "desc" },
     }),
-    prisma.resource.count({
+    prisma.role.count({
       where: { deletedAt: null },
     }),
   ]);
@@ -60,12 +65,19 @@ export async function getRoleById(id: number) {
 }
 
 export async function updateRole(id: number, data: UpdateRoleDTO) {
+  const updateData: any = {};
+
+  if (data.name) {
+    updateData.name = data.name;
+    updateData.slug = slugify(data.name);
+  }
+
   return prisma.role.update({
     where: {
       id,
       deletedAt: null,
     },
-    data,
+    data: updateData,
   });
 }
 

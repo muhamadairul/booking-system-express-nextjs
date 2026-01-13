@@ -1,33 +1,34 @@
-"use client"
+"use client";
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { api, ApiType, cn, pcn, shortcut, useResponsive } from "@utils";
-import { ToastComponent, ButtonComponent, ButtonProps, BottomSheetComponent } from "@components";
-
-
+import {
+  ToastComponent,
+  ButtonComponent,
+  ButtonProps,
+  BottomSheetComponent,
+} from "@components";
 
 type CT = "base" | "backdrop" | "header" | "footer";
 
 export interface ModalConfirmProps {
-  show            :  boolean;
-  onClose         :  () => void;
-  title          ?:  string | ReactNode;
-  children       ?:  any;
-  icon           ?:  any;
-  footer         ?:  string | ReactNode;
-  submitControl  ?:  ButtonProps & {
-    onSubmit     ?:  ApiType | (() => void);
-    onSuccess    ?:  () => void;
-    onError      ?:  () => void;
+  show: boolean;
+  onClose: () => void;
+  title?: string | ReactNode;
+  children?: any;
+  icon?: any;
+  footer?: string | ReactNode;
+  submitControl?: ButtonProps & {
+    onSubmit?: ApiType | (() => void);
+    onSuccess?: () => void;
+    onError?: () => void;
   };
 
   /** Use custom class with: "backdrop::", "header::", "footer::". */
-  className  ?:  string;
-};
-
-
+  className?: string;
+}
 
 export function ModalConfirmComponent({
   show,
@@ -41,24 +42,28 @@ export function ModalConfirmComponent({
 
   className = "",
 }: ModalConfirmProps) {
-  const { isSm }               =  useResponsive();
-  const [toast, setToast]      =  useState<boolean | "success" | "failed">(false);
-  const [loading, setLoading]  =  useState(false);
+  const { isSm } = useResponsive();
+  const [toast, setToast] = useState<boolean | "success" | "failed">(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (show) {
       document.getElementsByTagName("body")[0].style.overflow = "hidden";
 
-      shortcut.register("escape", () => {
-        onClose?.()
-      }, "Kembali")
+      shortcut.register(
+        "escape",
+        () => {
+          onClose?.();
+        },
+        "Kembali"
+      );
     } else {
       document.getElementsByTagName("body")[0].style.removeProperty("overflow");
     }
 
     return () => {
-      shortcut.unregister("escape")
-    }
+      shortcut.unregister("escape");
+    };
   }, [show]);
 
   const renderChildren = useMemo(() => {
@@ -72,10 +77,7 @@ export function ModalConfirmComponent({
             )}
           >
             <div className="mt-6">
-              <FontAwesomeIcon
-                icon={icon || faQuestion}
-                className={`text-xl`}
-              />
+              <FontAwesomeIcon icon={icon || faQuestion} className={`text-xl`} />
             </div>
 
             <h6 className="font-semibold text-lg">{title}</h6>
@@ -85,16 +87,13 @@ export function ModalConfirmComponent({
         {children}
 
         {footer && (
-          <div className={cn("modal-footer", pcn<CT>(className, "footer"))}>
-            {footer}
-          </div>
+          <div className={cn("modal-footer", pcn<CT>(className, "footer"))}>{footer}</div>
         )}
       </>
-    )
-  }, [title, footer, children])
+    );
+  }, [title, footer, children]);
 
-
-  const renderAction = (size: ButtonProps["size"] = 'md') => {
+  const renderAction = (size: ButtonProps["size"] = "md") => {
     return (
       <div className="flex justify-center pt-6">
         <ButtonComponent
@@ -109,7 +108,7 @@ export function ModalConfirmComponent({
           label={"Konfirmasi"}
           loading={loading}
           onClick={async () => {
-            if(!submitControl?.onSubmit) return;
+            if (!submitControl?.onSubmit) return;
 
             setLoading(true);
             if (typeof submitControl?.onSubmit == "function") {
@@ -119,11 +118,11 @@ export function ModalConfirmComponent({
 
               if (response?.status == 200 || response?.status == 201) {
                 setToast("success");
-                submitControl?.onSuccess?.();
+                // submitControl?.onSuccess?.();
                 setLoading(false);
               } else {
                 setToast("failed");
-                submitControl?.onError?.();
+                // submitControl?.onError?.();
                 setLoading(false);
               }
             }
@@ -134,12 +133,12 @@ export function ModalConfirmComponent({
           {...submitControl}
         />
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <>
-      {!isSm  ? (
+      {!isSm ? (
         <>
           <div
             className={cn(
@@ -165,21 +164,23 @@ export function ModalConfirmComponent({
         </>
       ) : (
         <>
-          <BottomSheetComponent 
+          <BottomSheetComponent
             show={show}
             onClose={onClose}
             size={220}
-            footer={renderAction('lg')}
+            footer={renderAction("lg")}
           >
             {renderChildren}
           </BottomSheetComponent>
         </>
       )}
-      
 
       <ToastComponent
         show={toast == "failed"}
-        onClose={() => setToast(false)}
+        onClose={() => {
+          setToast(false);
+          submitControl?.onError?.();
+        }}
         title="Gagal"
         className="!border-danger header::text-danger"
       >
@@ -190,7 +191,10 @@ export function ModalConfirmComponent({
 
       <ToastComponent
         show={toast == "success"}
-        onClose={() => setToast(false)}
+        onClose={() => {
+          setToast(false);
+          submitControl?.onSuccess?.();
+        }}
         title="Berhasil"
         className="!border-success header::text-success"
       >

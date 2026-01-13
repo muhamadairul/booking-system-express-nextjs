@@ -36,6 +36,15 @@ export default function ExampleLayout({ children }: { children: ReactNode }) {
                 },
               ]
             },
+            {
+              label: "ROLE",
+              items: [
+                {
+                  label: "Role",
+                  path: "/role",
+                },
+              ]
+            }
           ]}
         />
         <SidebarContentComponent>
