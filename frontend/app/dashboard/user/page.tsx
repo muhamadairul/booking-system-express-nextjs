@@ -11,7 +11,7 @@ export default function Table() {
           }}
           columnControl={[
             {
-              selector: "name",
+              selector: "username",
               label: "Nama",
               sortable: true,
               filterable: true,
@@ -27,7 +27,7 @@ export default function Table() {
           detailControl={[
             {
               label: "Nama",
-              item: "name",
+              item: "username",
             },
             {
               label: "Email",
@@ -46,9 +46,9 @@ export default function Table() {
               },
               {
                 construction: {
-                  name: "name",
-                  label: "Name",
-                  placeholder: "Ex: Joko Gunawan",
+                  name: "username",
+                  label: "Username",
+                  placeholder: "Ex: jokogunawan",
                 },
               },
               {

@@ -43,7 +43,7 @@ export default function Login() {
             onSuccess={(res) => {
               setAccessToken(res?.data?.accessToken)
               setUser(res?.data?.user)
-              router.push("/auth/me")
+              router.push("/dashboard")
             }}
             footerControl={() => (
               <>
