@@ -1,3 +1,4 @@
+"use client";
 import { TableSupervisionComponent } from "@components";
 
 export default function Table() {
@@ -39,7 +40,6 @@ export default function Table() {
             {
               label: "Name",
               item: "name",
-              
             },
             {
               label: "Type",
@@ -53,7 +53,38 @@ export default function Table() {
               label: "Description",
               item: "description",
             },
-            { label: "Created At", item: "createdAt" },
+            {
+              label: "Schedules",
+              item: (data) => {
+                return (
+                  <>
+                    <TableSupervisionComponent
+                      title="Schedule"
+                      key={"schedule-n"}
+                      actionControl={["EDIT", "DELETE"]}
+                      // id={data.id}
+                      fetchControl={{
+                        path: `schedules/resource/${data.id}`,
+                      }}
+                      columnControl={[
+                        {
+                          selector: "startTime",
+                          label: "Start Time",
+                          sortable: true,
+                          width: "250px",
+                        },
+                        {
+                          selector: "endTime",
+                          label: "End Time",
+                          sortable: true,
+                          width: "250px",
+                        },
+                      ]}
+                    />
+                  </>
+                );
+              },
+            },
           ]}
           formControl={{
             fields: [
