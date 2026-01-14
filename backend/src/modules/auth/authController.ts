@@ -5,8 +5,6 @@ import { NextFunction, Request, Response } from "express";
 
 export async function authLogin(req: Request, res: Response, next: NextFunction) {
   try {
-    console.log("BODY:", req.body);
-    console.log("HEADERS:", req.headers["content-type"]);
     const { identifier, password } = req.body;
 
     const result = await login(identifier, password);

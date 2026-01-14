@@ -118,11 +118,11 @@ export function ModalConfirmComponent({
 
               if (response?.status == 200 || response?.status == 201) {
                 setToast("success");
-                // submitControl?.onSuccess?.();
+                submitControl?.onSuccess?.();
                 setLoading(false);
               } else {
                 setToast("failed");
-                // submitControl?.onError?.();
+                submitControl?.onError?.();
                 setLoading(false);
               }
             }
@@ -179,7 +179,7 @@ export function ModalConfirmComponent({
         show={toast == "failed"}
         onClose={() => {
           setToast(false);
-          submitControl?.onError?.();
+          // submitControl?.onError?.();
         }}
         title="Gagal"
         className="!border-danger header::text-danger"
@@ -193,7 +193,7 @@ export function ModalConfirmComponent({
         show={toast == "success"}
         onClose={() => {
           setToast(false);
-          submitControl?.onSuccess?.();
+          // submitControl?.onSuccess?.();
         }}
         title="Berhasil"
         className="!border-success header::text-success"

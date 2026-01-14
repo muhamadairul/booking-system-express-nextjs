@@ -15,8 +15,12 @@ export interface UpdateResourceDTO {
 }
 
 export async function createResource(data: CreateResourceDTO) {
+  const capacity = Number(data.capacity) || 0;
   return prisma.resource.create({
-    data,
+    data: {
+      ...data,
+      capacity,
+    },
   });
 }
 
@@ -55,12 +59,22 @@ export async function getResourceById(id: number) {
 }
 
 export async function updateResource(id: number, data: UpdateResourceDTO) {
+  const updateData: any = {};
+
+  updateData.name = data.name;
+  updateData.type = data.type;
+  updateData.capacity = data.capacity ? Number(data.capacity) : 0;
+
+  if (data.description !== undefined || data.description !== null || data.description !== "null") {
+    updateData.description = data.description;
+  }
+
   return prisma.resource.update({
     where: {
       id,
       deletedAt: null,
     },
-    data,
+    data: updateData,
   });
 }
 

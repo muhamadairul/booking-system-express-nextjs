@@ -28,23 +28,37 @@ export default function ExampleLayout({ children }: { children: ReactNode }) {
               ],
             },
             {
-              label: "USER",
+              label: "Master Data",
+              collapse: true,
               items: [
                 {
                   label: "User",
                   path: "/user",
                 },
-              ]
-            },
-            {
-              label: "ROLE",
-              items: [
                 {
                   label: "Role",
                   path: "/role",
                 },
-              ]
-            }
+              ],
+            },
+            {
+              label: "Transactions",
+              collapse: true,
+              items: [
+                {
+                  label: "Resource",
+                  path: "/resource",
+                },
+                {
+                  label: "Schedule",
+                  path: "/schedule",
+                },
+                {
+                  label: "Booking",
+                  path: "/booking",
+                },
+              ],
+            },
           ]}
         />
         <SidebarContentComponent>
