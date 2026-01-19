@@ -1,54 +1,46 @@
 "use client";
 import { TableSupervisionComponent } from "@components";
-
-export function formatDateTime(value: string | Date, locale: string = "id-ID") {
-  if (!value) return "-";
-
-  const date = typeof value === "string" ? new Date(value) : value;
-
-  if (isNaN(date.getTime())) return "-";
-
-  return new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
+import { formatDateTime } from "../resource/page";
 
 export default function Table() {
   return (
     <>
       <div>
         <TableSupervisionComponent
-          title="Resource"
+          title="Booking"
           fetchControl={{
-            path: "resources",
+            path: "bookings",
           }}
           columnControl={[
-            {
-              selector: "name",
-              label: "Name",
-              sortable: true,
+            { 
+              selector: "customer",
+              item: (data: any) => data.customer?.name || "N/A",
+              label: "Customer",
               filterable: true,
               width: "350px",
             },
             {
-              selector: "type",
-              label: "Type",
-              sortable: false,
-              width: "150px",
-            },
-            {
-              selector: "capacity",
-              label: "Capacity",
+              selector: "startTime",
+              label: "Start Time",
+              item: (data: any) => formatDateTime(data?.schedule?.startTime),
               sortable: true,
+              filterable: true,
               width: "250px",
             },
             {
-              selector: "description",
-              label: "Description",
+              selector: "endTime",
+              item: (data: any) => formatDateTime(data?.schedule?.endTime),
+              label: "End Time",
+              sortable: true,
+              filterable: true,
+              width: "250px",
+            },
+            {
+              selector: "price",
+              // item: (data: any) => Cu,
+              label: "Price",
+              sortable: true,
+              filterable: true,
               width: "250px",
             },
           ]}
@@ -68,37 +60,6 @@ export default function Table() {
             {
               label: "Description",
               item: "description",
-            },
-            (data: any) => {
-              return (
-                <div key={"schedule-label-n"} style={{ marginTop: "20px", marginBottom: "10px" }}>
-                  <TableSupervisionComponent
-                    title="Schedule"
-                    key={"schedule-n"}
-                    actionControl={["EDIT", "DELETE"]}
-                    // id={data.id}
-                    fetchControl={{
-                      path: `schedules/resource/${data.id}`,
-                    }}
-                    columnControl={[
-                      {
-                        selector: "startTime",
-                        label: "Start Time",
-                        item: (data: any) => formatDateTime(data.startTime),
-                        sortable: true,
-                        width: "250px",
-                      },
-                      {
-                        selector: "endTime",
-                        label: "End Time",
-                        item: (data: any) => formatDateTime(data.endTime),
-                        sortable: true,
-                        width: "250px",
-                      },
-                    ]}
-                  />
-                </div>
-              );
             },
           ]}
           formControl={{

@@ -43,7 +43,7 @@ import {
 } from "@components";
 
 export interface TableSupervisionColumnProps {
-  selector: string;
+  selector: string | ((data: any) => ReactNode);
   label?: string;
   width?: string;
   sortable?: boolean;
@@ -413,7 +413,11 @@ export function TableSupervisionComponent({
                   <TypographyColumnComponent
                     key={key}
                     title={column.label}
-                    content={selected[column.selector]}
+                    content={
+                      typeof column.selector === "function"
+                        ? column.selector(selected)
+                        : selected[column.selector]
+                    }
                   />
                 )))}
         </div>
@@ -734,10 +738,12 @@ export function TableSupervisionComponent({
         <ExportExcel
           fetchControl={fetchControl}
           filename={"Export - " + title}
-          columnControl={columns?.map((cc) => ({
-            label: cc.label || "",
-            selector: cc.selector || "",
-          }))}
+          columnControl={columns
+            ?.filter((cc) => typeof cc.selector === "string")
+            .map((cc) => ({
+              label: cc.label || "",
+              selector: cc.selector as string,
+            }))}
         />
       </FloatingPageComponent>
 
@@ -749,10 +755,12 @@ export function TableSupervisionComponent({
       >
         <ImportExcel
           onSubmit={() => {}}
-          columnControl={columns?.map((cc) => ({
-            label: cc.label || "",
-            selector: cc.selector || "",
-          }))}
+          columnControl={columns
+            ?.filter((cc) => typeof cc.selector === "string")
+            .map((cc) => ({
+              label: cc.label || "",
+              selector: cc.selector as string,
+            }))}
         />
       </FloatingPageComponent>
 
@@ -764,10 +772,12 @@ export function TableSupervisionComponent({
       >
         <PrintTable
           fetchControl={fetchControl}
-          columnControl={columns?.map((cc) => ({
-            label: cc.label || "",
-            selector: cc.selector || "",
-          }))}
+          columnControl={columns
+            ?.filter((cc) => typeof cc.selector === "string")
+            .map((cc) => ({
+              label: cc.label || "",
+              selector: cc.selector as string,
+            }))}
           title={"Print - " + title}
         />
       </FloatingPageComponent>
@@ -790,11 +800,11 @@ export function TableSupervisionComponent({
           },
         }}
       >
-        {columns?.at(0)?.selector && selected ? (
+        {columns?.at(0)?.selector && selected && typeof columns?.at(0)?.selector === "string" ? (
           <p className="px-2 pb-2 text-sm text-center">
             Yakin menghapus{" "}
             <span className="font-semibold">
-              &quot;{selected[columns?.at(0)?.selector || ""]}&quot;
+              &quot;{selected[columns.at(0)!.selector as string]}&quot;
             </span>
             ?
           </p>

@@ -14,6 +14,7 @@ export async function getBookings(page = 1, limit = 10) {
       where: { deletedAt: null },
       skip,
       take: limit,
+      include: { customer: true, schedule: { include: { resource: true } } },
       orderBy: { createdAt: "desc" },
     }),
     prisma.booking.count({
