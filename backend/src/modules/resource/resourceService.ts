@@ -1,10 +1,13 @@
+import { BookingMode } from "@prisma/client";
 import { prisma } from "../../config/prisma";
+
 
 export interface CreateResourceDTO {
   name: string;
   type: string;
   capacity?: number;
   description?: string;
+  bookingMode: BookingMode;
 }
 
 export interface UpdateResourceDTO {
@@ -12,6 +15,7 @@ export interface UpdateResourceDTO {
   type?: string;
   capacity?: number;
   description?: string;
+  bookingMode?: BookingMode;
 }
 
 export async function createResource(data: CreateResourceDTO) {
@@ -64,6 +68,10 @@ export async function updateResource(id: number, data: UpdateResourceDTO) {
   updateData.name = data.name;
   updateData.type = data.type;
   updateData.capacity = data.capacity ? Number(data.capacity) : 0;
+
+  if (data.bookingMode !== undefined || data.bookingMode !== null || data.bookingMode !== "null") {
+    updateData.bookingMode = data.bookingMode;
+  }
 
   if (data.description !== undefined || data.description !== null || data.description !== "null") {
     updateData.description = data.description;

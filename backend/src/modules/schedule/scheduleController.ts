@@ -25,7 +25,8 @@ export async function findByResource(req: Request, res: Response, next: NextFunc
 export async function findById(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number(req.params.id);
-    const schedule = await ScheduleService.getScheduleById(id);
+    const resourceId = Number(req.params.resourceId);
+    const schedule = await ScheduleService.getScheduleById(id, resourceId);
 
     if (!schedule) {
       return res.status(404).json({ message: "Schedule not found" });
@@ -50,7 +51,8 @@ export async function update(req: Request, res: Response, next: NextFunction) {
 export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number(req.params.id);
-    await ScheduleService.softDeleteSchedule(id);
+    const resourceId = Number(req.params.resourceId);
+    await ScheduleService.softDeleteSchedule(id, resourceId);
     res.json({ message: "Schedule deleted" }).status(200).send();
   } catch (err) {
     next(err);
