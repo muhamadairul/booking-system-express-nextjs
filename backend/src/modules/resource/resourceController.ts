@@ -5,7 +5,7 @@ import { paginatedResponse } from "../../utils/response";
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
     const resource = await ResourceService.createResource(req.body);
-    res.status(201).json(resource);
+    res.status(200).json(resource);
   } catch (err) {
     next(err);
   }

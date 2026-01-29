@@ -1,6 +1,12 @@
 import { ReactNode } from "react";
-import { SidebarComponent, SidebarContentComponent } from "@components";
-import { CalendarDaysIcon, CubeIcon, HomeModernIcon, UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
+import { HeadbarComponent, SidebarComponent, SidebarContentComponent } from "@components";
+import {
+  CalendarDaysIcon,
+  CubeIcon,
+  HomeModernIcon,
+  UserGroupIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 
 export default function ExampleLayout({ children }: { children: ReactNode }) {
   return (
@@ -28,7 +34,6 @@ export default function ExampleLayout({ children }: { children: ReactNode }) {
                   leftContent: <HomeModernIcon className="w-5 h-5" />,
                 },
               ],
-
             },
             {
               label: "Master Data",
@@ -69,6 +74,9 @@ export default function ExampleLayout({ children }: { children: ReactNode }) {
           ]}
         />
         <SidebarContentComponent>
+          <HeadbarComponent>
+            <h1 className="font-semibold">Dashboard</h1>
+          </HeadbarComponent>
           <div className="p-2 lg:p-4">{children}</div>
         </SidebarContentComponent>
       </div>

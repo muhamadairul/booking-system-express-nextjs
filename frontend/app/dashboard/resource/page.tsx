@@ -71,7 +71,10 @@ export default function Table() {
             },
             (data: any) => {
               return (
-                <div key={"schedule-label-n"} style={{ marginTop: "20px", marginBottom: "10px" }}>
+                <div
+                  key={"schedule-label-n"}
+                  style={{ marginTop: "20px", marginBottom: "10px" }}
+                >
                   <TableSupervisionComponent
                     title="Schedule"
                     key={"schedule-n"}
@@ -96,6 +99,82 @@ export default function Table() {
                         width: "250px",
                       },
                     ]}
+                    formControl={{
+                      contentType: "application/json",
+                      fields: [
+                        {
+                          type: "select",
+                          construction: {
+                            name: "day",
+                            label: "Day",
+                            placeholder: "--- Select Day ---",
+                            options: [
+                              { label: "Monday", value: "MON" },
+                              { label: "Tuesday", value: "TUE" },
+                              { label: "Wednesday", value: "WED" },
+                              { label: "Thursday", value: "THU" },
+                              { label: "Friday", value: "FRI" },
+                              { label: "Saturday", value: "SAT" },
+                              { label: "Sunday", value: "SUN" },
+                            ],
+                            validations: ["required"],
+                          },
+                        },
+
+                        ...(data?.bookingMode === "FLEXIBLE"
+                          ? [
+                              {
+                                construction: {
+                                  name: "openTime",
+                                  label: "Open Time",
+                                  type: "time",
+                                  // validations: ["required"],
+                                },
+                              },
+                              {
+                                construction: {
+                                  name: "closeTime",
+                                  label: "Close Time",
+                                  type: "time",
+                                  // validations: ["required"],
+                                },
+                              },
+                              {
+                                construction: {
+                                  name: "pricePerHour",
+                                  label: "Price Per Hour",
+                                  type: "number",
+                                  // validations: ["required"],
+                                },
+                              },
+                            ]
+                          : [
+                              {
+                                construction: {
+                                  name: "startTime",
+                                  label: "Start Time",
+                                  type: "time",
+                                  // validations: ["required"],
+                                },
+                              },
+                              {
+                                construction: {
+                                  name: "endTime",
+                                  label: "End Time",
+                                  type: "time",
+                                  // validations: ["required"],
+                                },
+                              },
+                            ]),
+                            {
+                              type: "default",
+                              construction: {
+                                type: "button",
+
+                              }
+                            }
+                      ],
+                    }}
                   />
                 </div>
               );
@@ -108,6 +187,26 @@ export default function Table() {
                   name: "name",
                   label: "Name",
                   placeholder: "Ex: Meeting Room A",
+                  validations: ["required"],
+                },
+              },
+              {
+                type: "select",
+                construction: {
+                  type: "select",
+                  name: "bookingMode",
+                  label: "Booking Mode",
+                  placeholder: "--- Select Booking Mode ---",
+                  options: [
+                    {
+                      label: "Fleksible",
+                      value: "FLEXIBLE",
+                    },
+                    {
+                      label: "Fixed Slot",
+                      value: "FIXED_SLOT",
+                    },
+                  ],
                   validations: ["required"],
                 },
               },

@@ -33,9 +33,9 @@ interface CreateScheduleDTO {
   }[];
 }
 
-export async function createSchedule(data: CreateScheduleDTO) {
+export async function createSchedule(id: number, data: CreateScheduleDTO) {
   const resource = await prisma.resource.findUnique({
-    where: { id: data.resourceId },
+    where: { id: id },
   });
 
   if (!resource) {
@@ -45,6 +45,8 @@ export async function createSchedule(data: CreateScheduleDTO) {
   if (resource.bookingMode !== data.mode) {
     throw new Error("Booking mode mismatch with resource");
   }
+
+  
 
   if (data.mode === "FLEXIBLE") {
     if (!data.openTime || !data.closeTime) {

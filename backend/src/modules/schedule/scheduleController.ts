@@ -5,7 +5,9 @@ import { successResponse } from "../../utils/response";
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
-    const schedule = await ScheduleService.createSchedule(req.body);
+    const id = Number(req.params.resourceId);
+    console.log(id);
+    const schedule = await ScheduleService.createSchedule(id, req.body);
     res.status(201).json(successResponse("Schedule created", schedule));
   } catch (err) {
     next(err);

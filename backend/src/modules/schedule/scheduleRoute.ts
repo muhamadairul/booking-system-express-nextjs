@@ -3,7 +3,7 @@ import * as ScheduleController from "./scheduleController";
 
 const router = Router();
 
-router.post("/", ScheduleController.create);
+router.post("/resource/:resourceId", ScheduleController.create);
 router.get("/resource/:resourceId", ScheduleController.findByResource);
 router.get("/:id/resource/:resourceId", ScheduleController.findById);
 router.put("/:id", ScheduleController.update);
