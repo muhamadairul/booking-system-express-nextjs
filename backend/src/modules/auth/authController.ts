@@ -12,7 +12,7 @@ export async function authLogin(req: Request, res: Response, next: NextFunction)
     res.json(
       successResponse("Login berhasil", {
         accessToken: result.data.token,
-        user: result.data.user,
+        user: result.data.safeUser,
       })
     );
   } catch (e) {

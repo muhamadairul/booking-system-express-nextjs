@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,6 +6,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+//////////////////////
+// ENUM
+//////////////////////
 
 enum Gender {
   L
@@ -30,6 +28,25 @@ enum UserStatus {
   BANNED
 }
 
+enum BookingMode {
+  FLEXIBLE // lapangan, ruangan
+  FIXED_SLOT // bus, travel, event
+}
+
+enum WeekDay {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+//////////////////////
+// AUTH & USER
+//////////////////////
+
 model Role {
   id   Int    @id @default(autoincrement())
   name String
@@ -45,8 +62,8 @@ model Role {
 model User {
   id            Int        @id @default(autoincrement())
   email         String     @unique
+  username      String     @unique
   password      String
-  username      String
   status        UserStatus @default(ACTIVE)
   image         String?
   rememberToken String?
@@ -60,6 +77,19 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+}
+
+model UserAccessToken {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  token      String    @unique
+  expiredAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Customer {
@@ -78,26 +108,60 @@ model Customer {
   deletedAt DateTime?
 }
 
+//////////////////////
+// RESOURCE
+//////////////////////
+
 model Resource {
-  id          Int     @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   type        String
+  bookingMode BookingMode
   capacity    Int?
   description String?
 
-  schedules Schedule[]
+  weeklySchedules WeeklySchedule[]
+  timeSlots       TimeSlot[]
+  bookings        Booking[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
-model Schedule {
-  id         Int      @id @default(autoincrement())
+//////////////////////
+// SCHEDULE
+//////////////////////
+
+// Untuk lapangan & ruangan
+model WeeklySchedule {
+  id         Int     @id @default(autoincrement())
   resourceId Int
-  startTime  DateTime
-  endTime    DateTime
-  price      BigInt?
+  day        WeekDay
+
+  openTime  String // "07:00"
+  closeTime String // "22:00"
+
+  pricePerHour BigInt?
+
+  resource Resource @relation(fields: [resourceId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@unique([resourceId, day])
+}
+
+// Untuk bus & slot fix
+model TimeSlot {
+  id         Int     @id @default(autoincrement())
+  resourceId Int
+  day        WeekDay
+
+  startTime String // "02:00"
+  endTime   String? // optional
+  price     BigInt?
 
   resource Resource  @relation(fields: [resourceId], references: [id])
   bookings Booking[]
@@ -107,30 +171,30 @@ model Schedule {
   deletedAt DateTime?
 }
 
+//////////////////////
+// BOOKING
+//////////////////////
+
 model Booking {
-  id         Int           @id @default(autoincrement())
+  id         Int @id @default(autoincrement())
   customerId Int
-  scheduleId Int
+  resourceId Int
+
+  date      DateTime // tanggal booking (YYYY-MM-DD)
+  startTime String // "13:00"
+  endTime   String? // "17:00" (null untuk FIXED_SLOT)
+
+  timeSlotId Int? // hanya terisi kalau FIXED_SLOT
+
   quantity   Int           @default(1)
+  totalPrice BigInt
   status     BookingStatus @default(PENDING)
 
-  customer Customer @relation(fields: [customerId], references: [id])
-  schedule Schedule @relation(fields: [scheduleId], references: [id])
+  customer Customer  @relation(fields: [customerId], references: [id])
+  resource Resource  @relation(fields: [resourceId], references: [id])
+  timeSlot TimeSlot? @relation(fields: [timeSlotId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-}
-
-model UserAccessToken {
-  id         Int       @id @default(autoincrement())
-  userId     Int
-  token      String    @unique
-  expiredAt  DateTime?
-  lastUsedAt DateTime?
-  createdAt  DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-
-  @@index([userId])
 }

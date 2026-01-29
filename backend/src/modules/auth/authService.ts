@@ -21,6 +21,7 @@ export async function login(identifier: string, password: string, agent?: string
     throw new Error("Email/Username atau password salah");
   }
 
+  const { password: _, ...safeUser } = user;
   const token = generateToken();
 
   await prisma.userAccessToken.create({
@@ -37,7 +38,7 @@ export async function login(identifier: string, password: string, agent?: string
     data: {
       token,
       tokenType: "Bearer",
-      user,
+      safeUser,
     },
   };
 }

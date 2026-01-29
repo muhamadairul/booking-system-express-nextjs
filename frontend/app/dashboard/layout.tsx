@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { SidebarComponent, SidebarContentComponent } from "@components";
+import { CalendarDaysIcon, CubeIcon, HomeModernIcon, UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
 
 export default function ExampleLayout({ children }: { children: ReactNode }) {
   return (
@@ -22,10 +23,12 @@ export default function ExampleLayout({ children }: { children: ReactNode }) {
               label: "WELCOME",
               items: [
                 {
-                  label: "Welcome",
+                  label: "Dashboard",
                   path: "/",
+                  leftContent: <HomeModernIcon className="w-5 h-5" />,
                 },
               ],
+
             },
             {
               label: "Master Data",
@@ -34,10 +37,12 @@ export default function ExampleLayout({ children }: { children: ReactNode }) {
                 {
                   label: "User",
                   path: "/user",
+                  leftContent: <UserIcon className="w-5 h-5" />,
                 },
                 {
                   label: "Role",
                   path: "/role",
+                  leftContent: <UserGroupIcon className="w-5 h-5" />,
                 },
               ],
             },
@@ -48,14 +53,16 @@ export default function ExampleLayout({ children }: { children: ReactNode }) {
                 {
                   label: "Resource",
                   path: "/resource",
+                  leftContent: <CubeIcon className="w-5 h-5" />,
                 },
-                {
-                  label: "Schedule",
-                  path: "/schedule",
-                },
+                // {
+                //   label: "Schedule",
+                //   path: "/schedule",
+                // },
                 {
                   label: "Booking",
                   path: "/booking",
+                  leftContent: <CalendarDaysIcon className="w-5 h-5" />,
                 },
               ],
             },
